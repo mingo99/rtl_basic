@@ -1,0 +1,22 @@
+## Directories
+vivado/
+.Xil/
+log/
+logs/
+out/
+rpt/
+alib-52/
+
+csrc/
+simv.daidir/
+verdiLog/
+
+## Files
+sim_filelist.f
+novas.conf
+novas.rc
+simv
+ucli.key
+*.fsdb
+*.log
+*.rc
