@@ -5,7 +5,7 @@ VCS := vcs -full64 -LDFLAGS -Wl,-no-as-needed
 DVE := dve -full64
 
 # Define the top level module
-TOP_LEVEL_MODULE := tb_async_fifo
+TOP_LEVEL_MODULE := tb_s2p
 
 # Define signal file
 SIGNAL_RC_FILE := $(TOP_LEVEL_MODULE).rc

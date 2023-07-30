@@ -1,4 +1,4 @@
-module syncfifo #(
+module sync_fifo #(
     parameter DWIDTH = 8,
     parameter AWIDTH = 4
 ) (
@@ -55,7 +55,7 @@ fifo_mem #(
     .AWIDTH    (AWIDTH)
 ) u_fifomem (
     .clk       (clk),
-    .wen       (wren&(~full)),
+    .wren      (wren&(~full)),
     .waddr     (wptr),
     .raddr     (rptr),
     .wdata     (din),

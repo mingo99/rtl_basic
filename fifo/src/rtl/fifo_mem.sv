@@ -2,7 +2,7 @@ module fifo_mem #(
     parameter DWIDTH = 8,
     parameter AWIDTH = 4
 ) (
-    input  wire              wclk, wren,
+    input  wire              clk, wren,
     input  wire [AWIDTH-1:0] waddr, raddr,
     input  wire [DWIDTH-1:0] wdata,
     output wire [DWIDTH-1:0] rdata
@@ -17,7 +17,7 @@ module fifo_mem #(
         .raddr      (raddr), 
         .wclken     (wren), 
         .wclken_n   (!wren), 
-        .clk        (wclk)
+        .clk        (clk)
     ); 
 `else 
     // RTL Verilog memory model 
@@ -25,7 +25,7 @@ module fifo_mem #(
     reg [DWIDTH-1:0] mem [0:DEPTH-1]; 
     assign rdata = mem[raddr]; 
 
-    always @(posedge wclk) begin
+    always @(posedge clk) begin
         if(wren) mem[waddr] <= wdata;
     end
 `endif

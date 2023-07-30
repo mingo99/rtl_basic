@@ -1,14 +1,13 @@
 # VCS
 VCS := vcs -full64 -LDFLAGS -Wl,-no-as-needed
+DEFINE_VPD := +define+DUMP_VPD
+DEFINE_DSDB := +define+DUMP_FSDB
 
 # DVE
 DVE := dve -full64
 
 # Define the top level module
-TOP_LEVEL_MODULE := tb_async_fifo
-
-# Define signal file
-SIGNAL_RC_FILE := $(TOP_LEVEL_MODULE).rc
+TOP_LEVEL_MODULE := tb_top
 
 # Simulation Timescale
 TIMESCALE := timescale=1ns/1ps
@@ -62,7 +61,7 @@ open_dve :
 	$(DVE) -vpd ./sim_output_pluson.vpd &
 
 open_verdi:
-	verdi +v2k -sverilog -f sim_filelist.f -ssf ./sim_output_pluson.fsdb -sswr ./$(SIGNAL_RC_FILE) &
+	verdi +v2k -sverilog -f sim_filelist.f -ssf ./sim_output_pluson.fsdb -sswr ./$(TOP_LEVEL_MODULE).rc &
 
 compare:
 	@cd ../scripts/python && python compare.py

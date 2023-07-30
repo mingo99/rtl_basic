@@ -5,19 +5,19 @@ module async_fifo #(
     input  wire                 wclk,rclk,
     input  wire                 wrstn,rrstn,
     input  wire                 wren,rden,
-    input  wire [DWIDTH-1:0]    wdata,
-    output wire [DWIDTH-1:0]    rdata,
-    output reg                  wfull, 
-    output reg                  rempty
+    input  wire [DWIDTH-1:0]    din,
+    output wire [DWIDTH-1:0]    dout,
+    output reg                  full, 
+    output reg                  empty
 );
 
 reg  [AWIDTH:0] wbin, wptr, rbin, rptr;
 wire [AWIDTH:0] wbin_nxt, wptr_nxt, rbin_nxt, rptr_nxt;
 
-// assign wbin_nxt = wbin + wren&(~wfull);
-// assign rbin_nxt = rbin + rden&(~rempty);
-assign wbin_nxt = wren&(~wfull)  ? wbin+1'b1 : wbin;
-assign rbin_nxt = rden&(~rempty) ? rbin+1'b1 : rbin;
+// assign wbin_nxt = wbin + wren&(~full);
+// assign rbin_nxt = rbin + rden&(~empty);
+assign wbin_nxt = wren&(~full)  ? wbin+1'b1 : wbin;
+assign rbin_nxt = rden&(~empty) ? rbin+1'b1 : rbin;
 assign wptr_nxt = (wbin_nxt>>1) ^ wbin_nxt;
 assign rptr_nxt = (rbin_nxt>>1) ^ rbin_nxt;
 
@@ -60,21 +60,21 @@ always@(posedge rclk or negedge rrstn) begin
 end
 
 
-wire wfull_val = wptr_nxt=={~wq2_rptr[AWIDTH:AWIDTH-1], wq2_rptr[AWIDTH-2:0]};
+wire full_val = wptr_nxt=={~wq2_rptr[AWIDTH:AWIDTH-1], wq2_rptr[AWIDTH-2:0]};
 always@(posedge wclk or negedge wrstn) begin
     if(~wrstn) begin
-        wfull <= 'b0;
+        full <= 'b0;
     end else begin
-        wfull <= wfull_val;
+        full <= full_val;
     end
 end
 
-wire rempty_val = rptr_nxt==rq2_wptr;
+wire empty_val = rptr_nxt==rq2_wptr;
 always@(posedge rclk or negedge rrstn) begin
     if(~rrstn) begin
-        rempty <= 'b0;
+        empty <= 'b0;
     end else begin
-        rempty <= rempty_val;
+        empty <= empty_val;
     end
 end
 
@@ -82,12 +82,12 @@ fifo_mem #(
     .DWIDTH    (DWIDTH),
     .AWIDTH    (AWIDTH)
 ) u_fifo_mem (
-    .wclk      (wclk),
-    .wren      (wren&(~wfull)),
+    .clk       (wclk),
+    .wren      (wren&(~full)),
     .waddr     (waddr),
     .raddr     (raddr),
-    .wdata     (wdata),
-    .rdata     (rdata)
+    .wdata     (din),
+    .rdata     (dout)
 );
 
 endmodule
