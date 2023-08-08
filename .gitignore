@@ -6,6 +6,7 @@ logs/
 out/
 rpt/
 alib-52/
+.vscode/
 
 csrc/
 simv.daidir/

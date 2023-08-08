@@ -7,7 +7,7 @@ DEFINE_DSDB := +define+DUMP_FSDB
 DVE := dve -full64
 
 # Define the top level module
-TOP_LEVEL_MODULE := tb_top
+TOP_LEVEL_MODULE := tb_com
 
 # Simulation Timescale
 TIMESCALE := timescale=1ns/1ps
@@ -22,6 +22,8 @@ all: create_filelist com sim
 
 create_filelist:
 	tclsh ./create_sim_project.tcl sim_filelist.f $(FILELIST)
+
+cs: com sim
 
 com: make_log_dir	
 	$(VCS) +v2k -sverilog \
