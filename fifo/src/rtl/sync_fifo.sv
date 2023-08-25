@@ -1,65 +1,67 @@
 module sync_fifo #(
-    parameter DWIDTH = 8,
-    parameter AWIDTH = 4
+    parameter int DWIDTH = 8,
+    parameter int AWIDTH = 4
 ) (
-    input  wire                 clk, rstn,
-    input  wire                 wren, rden,
-    input  wire [DWIDTH-1:0]    din,
-    output wire [DWIDTH-1:0]    dout,
-    output wire                 full, 
-    output wire                 empty
-);
+    // verilog_format: off
+    input  wire              clk, rstn,
+    input  wire              wren, rden,
+    input  wire [DWIDTH-1:0] din,
+    output wire [DWIDTH-1:0] dout,
+    output wire              full,
+    output wire              empty
+);  // verilog_format: on
 
-parameter DEPTH = 1<<AWIDTH;
+    parameter int DEPTH = 1 << AWIDTH;
 
-reg [AWIDTH-1:0] wptr, rptr;
-wire [AWIDTH-1:0] wptr_nxt, rptr_nxt;
+    reg [AWIDTH-1:0] wptr, rptr;
+    wire [AWIDTH-1:0] wptr_nxt, rptr_nxt;
 
-reg [AWIDTH:0] pptr;
-wire [AWIDTH:0] pptr_nxt;
+    reg  [AWIDTH:0] pptr;
+    wire [AWIDTH:0] pptr_nxt;
 
-assign empty = pptr==0;
-assign full  = pptr==DEPTH;
+    assign empty = pptr == 0;
+    assign full = pptr == DEPTH;
 
-assign pptr_nxt = ~(wren^rden) ? pptr : (
-                    wren&(~full) ? pptr + 1'b1 : (
-                    rden&(~empty) ? pptr - 1'b1 : pptr));
-always @(posedge clk or negedge rstn) begin
-    if(~rstn) begin
-        pptr <= 0;
-    end else begin
-        pptr <= pptr_nxt;
+    assign pptr_nxt = ~(wren^rden) ? pptr : (
+                        wren&(~full) ? pptr + 1'b1 : (
+                        rden&(~empty) ? pptr - 1'b1 : pptr));
+    always @(posedge clk or negedge rstn) begin
+        if (~rstn) begin
+            pptr <= 0;
+        end else begin
+            pptr <= pptr_nxt;
+        end
     end
-end
 
-assign wptr_nxt = wren&(~full) ? wptr + 1'b1 : wptr;
-always @(posedge clk or negedge rstn) begin
-    if(~rstn) begin
-        wptr <= 0;
-    end else begin
-        wptr <= wptr_nxt;
+    assign wptr_nxt = wren & (~full) ? wptr + 1'b1 : wptr;
+    always @(posedge clk or negedge rstn) begin
+        if (~rstn) begin
+            wptr <= 0;
+        end else begin
+            wptr <= wptr_nxt;
+        end
     end
-end
 
-assign rptr_nxt = rden&(!empty) ? rptr + 1'b1: rptr;
-always @(posedge clk or negedge rstn) begin
-    if(~rstn) begin
-        rptr <= 0;
-    end else begin
-        rptr <= rptr_nxt;
+    assign rptr_nxt = rden & (!empty) ? rptr + 1'b1 : rptr;
+    always @(posedge clk or negedge rstn) begin
+        if (~rstn) begin
+            rptr <= 0;
+        end else begin
+            rptr <= rptr_nxt;
+        end
     end
-end
 
-fifo_mem #(
-    .DWIDTH    (DWIDTH),
-    .AWIDTH    (AWIDTH)
-) u_fifomem (
-    .clk       (clk),
-    .wren      (wren&(~full)),
-    .waddr     (wptr),
-    .raddr     (rptr),
-    .wdata     (din),
-    .rdata     (dout)
-);
+    fifo_mem #(
+        .DWIDTH(DWIDTH),
+        .AWIDTH(AWIDTH)
+    ) u_fifomem (
+        .clk  (clk),
+        .wren (wren & (~full)),
+        .waddr(wptr),
+        .raddr(rptr),
+        .wdata(din),
+        .rdata(dout)
+    );
 
 endmodule
+
