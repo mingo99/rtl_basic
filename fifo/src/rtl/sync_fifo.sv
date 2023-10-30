@@ -1,6 +1,6 @@
 module sync_fifo #(
-    parameter int DWIDTH = 8,
-    parameter int AWIDTH = 4
+    parameter DWIDTH = 8,
+    parameter AWIDTH = 4
 ) (
     // verilog_format: off
     input  wire              clk, rstn,
@@ -11,7 +11,7 @@ module sync_fifo #(
     output wire              empty
 );  // verilog_format: on
 
-    parameter int DEPTH = 1 << AWIDTH;
+    parameter DEPTH = 1 << AWIDTH;
 
     reg [AWIDTH-1:0] wptr, rptr;
     wire [AWIDTH-1:0] wptr_nxt, rptr_nxt;
