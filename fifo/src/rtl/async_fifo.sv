@@ -1,6 +1,6 @@
 module async_fifo #(
-    parameter logic [31:0] DWIDTH = 8,
-    parameter logic [31:0] AWIDTH = 4
+    parameter [31:0] DWIDTH = 8,
+    parameter [31:0] AWIDTH = 4
 ) (
     input  wire              wclk,
     input  wire              rclk,
